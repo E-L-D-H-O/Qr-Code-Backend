@@ -8,12 +8,28 @@ const jwt = require("jsonwebtoken");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const app = express();
 app.use(express.json());
-app.use(cors());
+
+const allowedOrigins = [
+    'https://createqr.d1nfh4ldjnk0ad.amplifyapp.com',
+    'http://localhost:3000',
+];
+
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    }
+}));
 
 if (!process.env.MONGO_URI || !process.env.JWT_SECRET) {
     console.error("❌ Missing MONGO_URI or JWT_SECRET in .env file.");
     process.exit(1);
 }
+
+
 
 mongoose
     .connect(process.env.MONGO_URI, {
@@ -150,8 +166,8 @@ app.post('/create-checkout-session', async (req, res) => {
                 },
             ],
             mode: 'payment',
-            success_url: 'http://localhost:5173/payment-success',
-            cancel_url: 'http://localhost:5173/payment-cancel',
+            success_url: `${COMMON_VARIABLES.FRONT_END}/payment-success`,
+            cancel_url: `${COMMON_VARIABLES.FRONT_END}/payment-cancel`,
         });
 
         res.json({ url: session.url });
