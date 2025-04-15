@@ -55,6 +55,13 @@ const authenticate = (req, res, next) => {
     }
 };
 
+
+app.get("/", async (req, res) => {
+
+    res.send("Welcome to backend server of QRCODE");
+
+})
+
 // Signup
 app.post("/signup", async (req, res) => {
     const { firstName, lastName, email, password } = req.body;
