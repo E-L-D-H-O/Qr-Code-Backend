@@ -7,7 +7,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const app = express();
-const COMMON_VARIABLES = require('./common');
 app.use(express.json());
 
 const allowedOrigins = [
@@ -152,9 +151,6 @@ app.get("/my-qrcodes", authenticate, async (req, res) => {
 app.post('/create-checkout-session', async (req, res) => {
     try {
 
-
-        console.log("payment", COMMON_VARIABLES.URL.FRONT_END);
-        console.log("payment", COMMON_VARIABLES.URL);
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: [
@@ -171,8 +167,8 @@ app.post('/create-checkout-session', async (req, res) => {
                 },
             ],
             mode: 'payment',
-            success_url: `${COMMON_VARIABLES.URL.FRONT_END}/payment-success`,
-            cancel_url: `${COMMON_VARIABLES.URL.FRONT_END}/payment-cancel`,
+            success_url: `https://createqr.d1nfh4ldjnk0ad.amplifyapp.com/payment-success`,
+            cancel_url: `https://createqr.d1nfh4ldjnk0ad.amplifyapp.com/payment-cancel`,
         });
 
         res.json({ url: session.url });
